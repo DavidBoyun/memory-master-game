@@ -1,0 +1,38 @@
+{
+  "name": "Memory Master - 중독성 메모리 게임",
+  "short_name": "Memory Master",
+  "description": "뇌를 깨우는 중독성 메모리 카드 게임! 콤보를 쌓고 아이템을 모으며 최고 점수에 도전하세요!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#764ba2",
+  "orientation": "portrait",
+  "categories": ["games", "entertainment"],
+  "lang": "ko",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzIiIGhlaWdodD0iNzIiIHZpZXdCb3g9IjAgMCA3MiA3MiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjcyIiBoZWlnaHQ9IjcyIiByeD0iMTYiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik0zNiA1MkMzNCA1MiAzMiA1MCAzMiA0OFYyNEMzMiAyMiAzNCAyMCAzNiAyMEg0OEM1MCAyMCA1MiAyMiA1MiAyNFY0OEM1MiA1MCA1MCA1MiA0OCA1Mkg0OFozNlpNMzYgNDhWMjRINDhWNDhIMzZaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMjAgNTJDMTggNTIgMTYgNTAgMTYgNDhWMjRDMTYgMjIgMTggMjAgMjAgMjBIMzJDMzQgMjAgMzYgMjIgMzYgMjRWNDhDMzYgNTAgMzQgNTIgMzIgNTJIMjBaTTIwIDQ4VjI0SDMyVjQ4SDIwWiIgZmlsbD0id2hpdGUiLz4KPGRlZnM+CjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8xXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjcyIiB5Mj0iNzIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K",
+      "sizes": "72x72",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQ0IiBoZWlnaHQ9IjE0NCIgdmlld0JveD0iMCAwIDE0NCAxNDQiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNDQiIGhlaWdodD0iMTQ0IiByeD0iMzIiIGZpbGw9InVybCgjZ3JhZGllbnQwX2xpbmVhcl8xXzEpIi8+CjxwYXRoIGQ9Ik03MiAxMDRDNjggMTA0IDY0IDEwMCA2NCA5NlY0OEM2NCA0NCA2OCA0MCA3MiA0MEg5NkMxMDAgNDAgMTA0IDQ0IDEwNCA0OFY5NkMxMDQgMTAwIDEwMCAxMDQgOTYgMTA0SDk2Wjc2Wk03MiA5NlY0OEg5NlY5Nkg3MloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik00MCAxMDRDMzYgMTA0IDMyIDEwMCAzMiA5NlY0OEMzMiA0NCAzNiA0MCA0MCA0MEg2NEM2OCA0MCA3MiA0NCA3MiA0OFY5NkM3MiAxMDAgNjggMTA0IDY0IDEwNEg0MFpNNDAgOTZWNDhINjRWOTZINDBaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDBfbGluZWFyXzFfMSIgeDE9IjAiIHkxPSIwIiB4Mj0iMTQ0IiB5Mj0iMTQ0IiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+CjxzdG9wIHN0b3AtY29sb3I9IiM2NjdFRUEiLz4KPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjNzY0QkEyIi8+CjwvbGluZWFyR3JhZGllbnQ+CjwvZGVmcz4KPC9zdmc+Cg==",
+      "sizes": "144x144",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIiByeD0iMTEyIiBmaWxsPSJ1cmwoI2dyYWRpZW50MF9saW5lYXJfMV8xKSIvPgo8cGF0aCBkPSJNMjU2IDM2OEMyNDAgMzY4IDIyNCAzNTIgMjI0IDMzNlYxNzZDMjI0IDE2MCAyNDAgMTQ0IDI1NiAxNDRIMzM2QzM1MiAxNDQgMzY4IDE2MCAzNjggMTc2VjMzNkMzNjggMzUyIDM1MiAzNjggMzM2IDM2OEgyNTZaTTI1NiAzMzZWMTc2SDMzNlYzMzZIMjU2WiIgZmlsbD0id2hpdGUiLz4KPHN0b3Agc3RvcC1jb2xvcj0iIzc2NEJBMiIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIwIiBoZWlnaHQ9IjU2OCIgdmlld0JveD0iMCAwIDMyMCA1NjgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMjAiIGhlaWdodD0iNTY4IiBmaWxsPSJ1cmwoI2dyYWRpZW50MF9saW5lYXJfMV8xKSIvPgo8dGV4dCB4PSIxNjAiIHk9IjEwMCIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtZmFtaWx5PSJBcmlhbCIgdGV4dC1hbmNob3I9Im1pZGRsZSI+🧠 E1lbW9yeSBNYXN0ZXI8L3RleHQ+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MF9saW5lYXJfMV8xIiB4MT0iMCIgeTE9IjAiIHgyPSIzMjAiIHkyPSI1NjgiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iIzY2N0VFQSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRCQTIiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K",
+      "sizes": "320x568",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ]
+}
