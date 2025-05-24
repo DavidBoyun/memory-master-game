@@ -1,17 +1,55 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🧠 Memory Master - 중독성 메모리 게임</title>
-    
-    <!-- PWA 설정 -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#764ba2">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Memory Master">
-    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>🧠 Memory Master - 중독성 메모리 게임</title>
+        
+        <!-- PWA 설정 -->
+        <link rel="manifest" href="manifest.json">
+        <meta name="theme-color" content="#764ba2">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="apple-mobile-web-app-title" content="Memory Master">
+        
+        <!-- 각종 디바이스용 아이콘 -->
+        <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSI0MCIgZmlsbD0idXJsKCNncmFkaWVudDBfbGluZWFyXzFfMSkiLz48dGV4dCB4PSI5NiIgeT0iMTI4IiBmb250LWZhbWlseT0iQXBwbGUgQ29sb3IgRW1vamksIFNlZ29lIFVJIEVtb2ppLCBOb3RvIENvbG9yIEVtb2ppIiBmb250LXNpemU9Ijg0IiBmaWxsPSIjRkZGIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7wn6eMPC90ZXh0PjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQwX2xpbmVhcl8xXzEiIHgxPSIwIiB5MT0iMCIgeDI9IjE5MiIgeTI9IjE5MiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIHN0b3AtY29sb3I9IiM2NjdlZWEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiM3NjRiYTIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48L3N2Zz4=">
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGV4dCB4PSIxNiIgeT0iMjQiIGZvbnQtZmFtaWx5PSJBcHBsZSBDb2xvciBFbW9qaSwgU2Vnb2UgVUkgRW1vamksIE5vdG8gQ29sb3IgRW1vamkiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM2NjdlZWEiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfp4w8L3RleHQ+PC9zdmc+">
+        
+        <!-- SEO 및 소셜 미디어 -->
+        <meta name="description" content="🧠 중독성 있는 메모리 카드 매칭 게임! 콤보, 아이템, 특수 효과가 가득한 두뇌 트레이닝 게임을 즐겨보세요.">
+        <meta name="keywords" content="메모리게임, 카드게임, 두뇌훈련, 기억력게임, PWA게임">
+        <meta name="author" content="Memory Master Team">
+        
+        <!-- Service Worker 등록 스크립트 추가 -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(registration => {
+                            console.log('✅ SW 등록 성공:', registration);
+                            
+                            // 업데이트 확인
+                            registration.addEventListener('updatefound', () => {
+                                console.log('🔄 새 버전 발견!');
+                                const newWorker = registration.installing;
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // 새 버전 사용 가능 알림
+                                        if (confirm('🚀 새 버전이 있습니다! 업데이트하시겠습니까?')) {
+                                            newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                            window.location.reload();
+                                        }
+                                    }
+                                });
+                            });
+                        })
+                        .catch(error => {
+                            console.log('❌ SW 등록 실패:', error);
+                        });
+                });
+            }
+        </script>
     <style>
         * {
             margin: 0;
@@ -87,22 +125,83 @@
 
         .level-title {
             font-size: 1.5em;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
+        }
+
+        .timer-progress {
+            width: 100%;
+            height: 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 10px 0;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 1s linear;
+            border-radius: 4px;
+        }
+
+        .timer-fill.warning {
+            background: linear-gradient(90deg, #ff9800, #ffb74d);
+            animation: warningPulse 0.5s ease-in-out infinite;
+        }
+
+        .timer-fill.danger {
+            background: linear-gradient(90deg, #f44336, #ff5722);
+            animation: dangerPulse 0.3s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes dangerPulse {
+            0%, 100% { opacity: 1; transform: scaleY(1); }
+            50% { opacity: 0.8; transform: scaleY(1.3); }
+        }
+
+        .challenge-bar {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .challenge-item {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+
+        .challenge-item.completed {
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); }
+            100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.8); }
         }
 
         .progress-bar {
-            width: 200px;
+            width: 100%;
             height: 8px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
             border-radius: 4px;
-            overflow: hidden;
-            margin: 0 auto;
+            margin-top: 10px;
         }
 
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, #4caf50, #8bc34a);
-            transition: width 0.3s ease;
+            transition: width 0.5s ease;
+            border-radius: 4px;
         }
 
         .cards-grid {
@@ -427,140 +526,6 @@
             50% { opacity: 1; transform: scale(1.2); }
         }
 
-        .timer-container {
-            width: 100px;
-            height: 40px;
-            position: relative;
-            margin: 0 auto;
-        }
-
-        .timer-bar {
-            width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-            border: 2px solid rgba(255,255,255,0.3);
-        }
-
-        .timer-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4caf50, #8bc34a);
-            transition: width 1s linear;
-            border-radius: 2px;
-        }
-
-        .timer-fill.warning {
-            background: linear-gradient(90deg, #ff9800, #ffb74d);
-            animation: warningPulse 0.5s ease-in-out infinite;
-        }
-
-        .timer-fill.danger {
-            background: linear-gradient(90deg, #f44336, #ff5722);
-            animation: dangerPulse 0.3s ease-in-out infinite;
-        }
-
-        @keyframes warningPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        @keyframes dangerPulse {
-            0%, 100% { opacity: 1; transform: scaleY(1); }
-            50% { opacity: 0.8; transform: scaleY(1.2); }
-        }
-
-        .timer-text {
-            position: absolute;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #ffeb3b;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-        }
-
-        .timer-text.warning {
-            color: #ff9800;
-            animation: warningShake 0.5s ease-in-out infinite;
-        }
-
-        .timer-text.danger {
-            color: #f44336;
-            animation: dangerShake 0.2s ease-in-out infinite;
-        }
-
-        @keyframes warningShake {
-            0%, 100% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.1); }
-        }
-
-        @keyframes dangerShake {
-            0%, 100% { transform: translateX(-50%) translateY(0px); }
-            25% { transform: translateX(-50%) translateY(-1px); }
-            75% { transform: translateX(-50%) translateY(1px); }
-        }
-
-        .cards-grid.warning {
-            animation: cardWarning 2s ease-in-out infinite;
-        }
-
-        .cards-grid.danger {
-            animation: cardDanger 0.5s ease-in-out infinite;
-        }
-
-        @keyframes cardWarning {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-        }
-
-        @keyframes cardDanger {
-            0%, 100% { transform: translateX(0) scale(1); }
-            25% { transform: translateX(-2px) scale(1.01); }
-            75% { transform: translateX(2px) scale(1.01); }
-        }
-
-        .screen-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 500;
-        }
-
-        .screen-overlay.warning {
-            background: radial-gradient(circle, transparent 60%, rgba(255, 152, 0, 0.1) 100%);
-            animation: warningOverlay 2s ease-in-out infinite;
-        }
-
-        .screen-overlay.danger {
-            background: radial-gradient(circle, transparent 50%, rgba(244, 67, 54, 0.2) 100%);
-            animation: dangerOverlay 0.5s ease-in-out infinite;
-        }
-
-        @keyframes warningOverlay {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
-        }
-
-        @keyframes dangerOverlay {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        .heartbeat {
-            animation: heartbeat 0.8s ease-in-out infinite;
-        }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
         .items-bar {
             display: flex;
             gap: 10px;
@@ -654,23 +619,140 @@
             100% { transform: scale(0) rotate(360deg); opacity: 0; }
         }
 
-        .achievement {
+        .share-popup {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #ffd700, #ffb347);
-            color: #333;
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-weight: bold;
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-            animation: slideInRight 0.5s ease-out;
-            z-index: 1000;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 2000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 3px solid rgba(255,255,255,0.2);
         }
 
-        @keyframes slideInRight {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(0); }
+        .share-title {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #ffeb3b;
+        }
+
+        .share-score {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+            margin: 10px 0;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .share-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn.twitter {
+            background: #1DA1F2;
+            color: white;
+        }
+
+        .share-btn.facebook {
+            background: #4267B2;
+            color: white;
+        }
+
+        .share-btn.copy {
+            background: #34495e;
+            color: white;
+        }
+
+        .daily-challenge {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 15px 0;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .daily-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .streak-counter {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .achievement-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ffd700, #ffb347);
+            color: #333;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 2000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: achievementBounce 0.6s ease-out;
+        }
+
+        @keyframes achievementBounce {
+            0% { transform: translate(-50%, -50%) scale(0.3); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .achievement {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #4caf50, #45a049);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.2em;
+            font-weight: bold;
+            z-index: 1500;
+            animation: slideInOut 3s ease-out forwards;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideInOut {
+            0% { transform: translate(-50%, -150%); opacity: 0; }
+            15% { transform: translate(-50%, -50%); opacity: 1; }
+            85% { transform: translate(-50%, -50%); opacity: 1; }
+            100% { transform: translate(-50%, -150%); opacity: 0; }
+        }
+        #musicBtn {
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            color: white;
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+        }
+
+        #musicBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(156, 39, 176, 0.6);
         }
     </style>
 </head>
@@ -691,7 +773,7 @@
                 <div>콤보</div>
             </div>
             <div class="stat">
-                <div class="stat-value" id="timer">60</div>
+                <div class="stat-value" id="timer">45</div>
                 <div>시간</div>
             </div>
         </div>
@@ -700,25 +782,48 @@
     <div class="game-container">
         <div class="level-info">
             <div class="level-title">레벨 <span id="currentLevel">1</span> - <span id="levelName">초보자</span></div>
+            
+            <!-- 타이머 프로그레스 바 -->
+            <div class="timer-progress">
+                <div class="timer-fill" id="timerFill" style="width: 100%"></div>
+            </div>
+            
+            <!-- 도전 과제 -->
+            <div class="challenge-bar">
+                <div class="challenge-item" id="perfectChallenge">🎯 완벽</div>
+                <div class="challenge-item" id="speedChallenge">⚡ 스피드</div>
+                <div class="challenge-item" id="comboChallenge">🔥 콤보</div>
+                <div class="challenge-item" id="survivalChallenge">💀 생존</div>
+            </div>
+            
+            <!-- 진행률 바 -->
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
         </div>
 
+        <!-- 일일 도전 -->
+        <div class="daily-challenge">
+            <div class="daily-title">🔥 일일 도전</div>
+            <div class="streak-counter">
+                연속 <span id="streakCount">0</span>일 | 오늘 <span id="todayCount">0</span>게임
+            </div>
+        </div>
+
         <div class="items-bar">
-            <button class="item" onclick="useGun()" :disabled="gameState.items.gun === 0">
+            <button class="item" onclick="useGun()">
                 🔫
                 <span class="item-count" id="gunCount">0</span>
             </button>
-            <button class="item" onclick="useTimeAdd()" :disabled="gameState.items.timeAdd === 0">
+            <button class="item" onclick="useTimeAdd()">
                 ⏰
                 <span class="item-count" id="timeAddCount">0</span>
             </button>
-            <button class="item" onclick="useHintItem()" :disabled="gameState.items.hint === 0">
+            <button class="item" onclick="useHintItem()">
                 💡
                 <span class="item-count" id="hintItemCount">0</span>
             </button>
-            <button class="item" onclick="useFreeze()" :disabled="gameState.items.freeze === 0">
+            <button class="item" onclick="useFreeze()">
                 ❄️
                 <span class="item-count" id="freezeCount">0</span>
             </button>
@@ -728,8 +833,9 @@
 
         <div class="controls">
             <button class="btn btn-primary" onclick="startNewGame()">새 게임</button>
-            <button class="btn btn-secondary" onclick="useHint()">힌트 (3개)</button>
+            <button class="btn btn-secondary" onclick="shareScore()">📤 공유</button>
             <button class="btn btn-secondary" onclick="toggleSound()" id="soundBtn">🔊 사운드</button>
+            <button class="btn btn-secondary" onclick="toggleBackgroundMusic()" id="musicBtn">🎵 배경음악</button>
         </div>
     </div>
 
@@ -824,11 +930,23 @@
             }
         }
 
+        // localStorage 대체 함수들 (메모리 저장소 사용)
+        const memoryStorage = {
+            data: {},
+            getItem: function(key) {
+                return this.data[key] || null;
+            },
+            setItem: function(key, value) {
+                this.data[key] = value;
+            }
+        };
+
+        // 게임 상태 초기화
         let gameState = {
             level: 1,
             score: 0,
             combo: 0,
-            timer: 45, // 시작 시간을 60 → 45초로 조정
+            timer: 45,
             cards: [],
             flippedCards: [],
             matchedPairs: 0,
@@ -841,8 +959,28 @@
                 timeAdd: 0,
                 hint: 0,
                 freeze: 0
+            },
+            // 중독성 시스템 추가
+            streak: 0,          // 연속 성공일
+            perfectRounds: 0,   // 완벽한 라운드 수
+            bestScore: 0,
+            bestLevel: 1,
+            totalGames: 0,
+            todayGames: 0,
+            challenges: {
+                perfectGame: false,     // 실수 없이 클리어
+                speedRunner: false,     // 30초 내 클리어
+                comboMaster: false,     // 10콤보 달성
+                survivor: false         // 5초 미만 상황에서 클리어
             }
         };
+
+        // 초기 데이터 로드
+        function loadGameData() {
+            gameState.bestScore = parseInt(memoryStorage.getItem('bestScore')) || 0;
+            gameState.bestLevel = parseInt(memoryStorage.getItem('bestLevel')) || 1;
+            gameState.totalGames = parseInt(memoryStorage.getItem('totalGames')) || 0;
+        }
 
         const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐙', '🐵', '🐔', '🐧', '🦆', '🦋', '🐝', '🐞', '🦀', '🐢', '🐍', '🦎', '🐲', '🐳', '🐋', '🐠'];
 
@@ -852,9 +990,9 @@
             { pairs: 6, name: '아마추어', time: 55, gridCols: 4 },
             { pairs: 8, name: '중급자', time: 60, gridCols: 4 },
             { pairs: 10, name: '고급자', time: 65, gridCols: 5 },
-            { pairs: 12, name: '전문가', time: 70, gridCols: 4 }, // 6x4 = 24개
-            { pairs: 15, name: '마스터', time: 75, gridCols: 5 }, // 6x5 = 30개
-            { pairs: 18, name: '그랜드마스터', time: 80, gridCols: 6 } // 6x6 = 36개
+            { pairs: 12, name: '전문가', time: 70, gridCols: 4 },
+            { pairs: 15, name: '마스터', time: 75, gridCols: 5 },
+            { pairs: 18, name: '그랜드마스터', time: 80, gridCols: 6 }
         ];
 
         function initGame() {
@@ -865,13 +1003,9 @@
             gameState.flippedCards = [];
             gameState.gameActive = true;
 
-            // 모든 효과 초기화
-            document.body.classList.remove('heartbeat');
-            const overlay = document.querySelector('.screen-overlay');
-            if (overlay) document.body.removeChild(overlay);
-
             createCards(currentLevel.pairs, currentLevel.gridCols);
             updateDisplay();
+            updateTimerBar();
             startTimer();
         }
 
@@ -939,7 +1073,7 @@
                 setTimeout(() => {
                     checkMatch();
                     gameState.gameActive = true;
-                }, 400); // 0.8초 → 0.4초로 단축
+                }, 400);
             }
         }
 
@@ -1011,8 +1145,8 @@
                     setTimeout(() => {
                         cardElements[card1Id].classList.remove('wrong');
                         cardElements[card2Id].classList.remove('wrong');
-                    }, 300); // 0.5초 → 0.3초로 단축
-                }, 600); // 1초 → 0.6초로 단축
+                    }, 300);
+                }, 600);
             }
 
             gameState.flippedCards = [];
@@ -1027,7 +1161,11 @@
                 const flash = document.createElement('div');
                 flash.className = 'screen-flash';
                 document.body.appendChild(flash);
-                setTimeout(() => document.body.removeChild(flash), 300);
+                setTimeout(() => {
+                    if (document.body.contains(flash)) {
+                        document.body.removeChild(flash);
+                    }
+                }, 300);
             }
 
             // 우주 배경 효과 (7콤보 이상)
@@ -1152,7 +1290,6 @@
             const penaltyDiv = document.createElement('div');
             penaltyDiv.className = 'penalty-display';
             penaltyDiv.innerHTML = `⏰ -${penalty}초 ⏰<br><small>시간 감소!</small>`;
-            penaltyDiv.style.color = '#ff9800';
             document.body.appendChild(penaltyDiv);
             
             setTimeout(() => {
@@ -1381,7 +1518,9 @@
             document.body.appendChild(achievementDiv);
             
             setTimeout(() => {
-                document.body.removeChild(achievementDiv);
+                if (document.body.contains(achievementDiv)) {
+                    document.body.removeChild(achievementDiv);
+                }
             }, 3000);
         }
 
@@ -1393,122 +1532,88 @@
             const levelBonus = gameState.level * 500;
             gameState.score += timeBonus + levelBonus;
             
-            showAchievement(`🎉 레벨 ${gameState.level} 클리어! 보너스: ${timeBonus + levelBonus}점`);
+            // 통계 업데이트
+            if (gameState.score > gameState.bestScore) {
+                gameState.bestScore = gameState.score;
+                memoryStorage.setItem('bestScore', gameState.bestScore);
+                showAchievementPopup('🏆 NEW RECORD!', `새로운 최고 점수: ${gameState.score.toLocaleString()}점!`);
+            }
+
+            if (gameState.level > gameState.bestLevel) {
+                gameState.bestLevel = gameState.level;
+                memoryStorage.setItem('bestLevel', gameState.bestLevel);
+            }
+
+            // 도전과제 달성 체크
+            checkAchievements();
+            
+            // 🔊 레벨 완료 사운드
+            sounds.levelUp();
+            
+            showAchievement(`🎉 레벨 ${gameState.level} 클리어! 보너스: ${(timeBonus + levelBonus).toLocaleString()}점`);
             
             setTimeout(() => {
                 gameState.level++;
                 initGame();
-            }, 1500); // 2초 → 1.5초로 단축
+            }, 2000);
         }
 
-        function startTimer() {
-            const maxTime = levels[gameState.level - 1]?.time || 45;
+        function checkAchievements() {
+            const achievements = [];
             
-            gameState.timerInterval = setInterval(() => {
-                gameState.timer--;
-                updateDisplay();
-                updateTimerEffects(maxTime);
-                
-                if (gameState.timer <= 0) {
-                    gameOver();
-                }
-            }, 1000);
-        }
-
-        function updateTimerEffects(maxTime) {
-            const timerFill = document.getElementById('timerFill');
-            const timerText = document.getElementById('timerText');
-            const cardsGrid = document.getElementById('cardsGrid');
-            
-            // 시간 비율 계산
-            const timePercent = (gameState.timer / maxTime) * 100;
-            timerFill.style.width = timePercent + '%';
-            
-            // 화면 오버레이 제거
-            const existingOverlay = document.querySelector('.screen-overlay');
-            if (existingOverlay) {
-                document.body.removeChild(existingOverlay);
+            if (gameState.challenges.perfectGame && gameState.challenges.speedRunner) {
+                achievements.push('🎯⚡ PERFECT SPEEDRUN!');
             }
             
-            // 기존 클래스 제거
-            timerFill.className = 'timer-fill';
-            timerText.className = 'timer-text';
-            cardsGrid.className = 'cards-grid';
-            
-            if (gameState.timer <= 5) {
-                // 🚨 극도로 위험 (5초 이하)
-                timerFill.classList.add('danger');
-                timerText.classList.add('danger');
-                cardsGrid.classList.add('danger');
-                document.body.classList.add('heartbeat');
-                
-                // 빨간 화면 오버레이
-                const overlay = document.createElement('div');
-                overlay.className = 'screen-overlay danger';
-                document.body.appendChild(overlay);
-                
-                // 위험 사운드 (매초)
-                if (soundEnabled) {
-                    sounds.wrong();
-                }
-                
-            } else if (gameState.timer <= 10) {
-                // ⚠️ 위험 (10초 이하)
-                timerFill.classList.add('warning');
-                timerText.classList.add('warning');
-                cardsGrid.classList.add('warning');
-                
-                // 주황 화면 오버레이
-                const overlay = document.createElement('div');
-                overlay.className = 'screen-overlay warning';
-                document.body.appendChild(overlay);
-                
-                // 경고 사운드 (5초마다)
-                if (soundEnabled && gameState.timer % 5 === 0) {
-                    sounds.flip();
-                }
-                
-            } else {
-                // 정상 상태
-                document.body.classList.remove('heartbeat');
+            if (gameState.challenges.survivor && gameState.challenges.comboMaster) {
+                achievements.push('💀🔥 CLUTCH MASTER!');
             }
+            
+            if (Object.values(gameState.challenges).every(c => c)) {
+                achievements.push('🏆 GRAND SLAM!');
+            }
+
+            achievements.forEach((achievement, index) => {
+                setTimeout(() => showAchievementPopup('🎖️ ACHIEVEMENT!', achievement), 500 * (index + 1));
+            });
         }
 
-        function gameOver() {
-            gameState.gameActive = false;
-            clearInterval(gameState.timerInterval);
+        function showAchievementPopup(title, text) {
+            const popup = document.createElement('div');
+            popup.className = 'achievement-popup';
+            popup.innerHTML = `
+                <div style="font-size: 2em; margin-bottom: 10px;">${title}</div>
+                <div style="font-size: 1.2em;">${text}</div>
+            `;
+            document.body.appendChild(popup);
             
-            // 모든 효과 제거
-            document.body.classList.remove('heartbeat');
-            const overlay = document.querySelector('.screen-overlay');
-            if (overlay) document.body.removeChild(overlay);
-            
-            showAchievement(`😵 게임 오버! 최종 점수: ${gameState.score}점`);
-        }
-
-        function updateDisplay() {
-            document.getElementById('score').textContent = gameState.score.toLocaleString();
-            document.getElementById('level').textContent = gameState.level;
-            document.getElementById('combo').textContent = gameState.combo;
-            document.getElementById('timerText').textContent = gameState.timer;
-            document.getElementById('currentLevel').textContent = gameState.level;
-            
-            const currentLevelData = levels[gameState.level - 1] || levels[levels.length - 1];
-            document.getElementById('levelName').textContent = currentLevelData.name;
-            
-            const progress = (gameState.matchedPairs / gameState.totalPairs) * 100;
-            document.getElementById('progressFill').style.width = `${progress}%`;
-            
-            updateItemDisplay();
+            setTimeout(() => {
+                if (document.body.contains(popup)) {
+                    document.body.removeChild(popup);
+                }
+            }, 3000);
         }
 
         function startNewGame() {
             clearInterval(gameState.timerInterval);
+            
+            // 통계 업데이트
+            gameState.totalGames++;
+            gameState.todayGames++;
+            memoryStorage.setItem('totalGames', gameState.totalGames);
+            
+            // 게임 상태 초기화 (통계는 유지)
+            const oldStats = {
+                bestScore: gameState.bestScore,
+                bestLevel: gameState.bestLevel,
+                totalGames: gameState.totalGames
+            };
+            
             gameState = {
                 level: 1,
                 score: 0,
                 combo: 0,
-                timer: 45, // 시작 시간 45초로 조정
+                timer: 45,
                 cards: [],
                 flippedCards: [],
                 matchedPairs: 0,
@@ -1521,45 +1626,136 @@
                     timeAdd: 0,
                     hint: 0,
                     freeze: 0
+                },
+                streak: 0,
+                perfectRounds: 0,
+                bestScore: oldStats.bestScore,
+                bestLevel: oldStats.bestLevel,
+                totalGames: oldStats.totalGames,
+                todayGames: gameState.todayGames + 1,
+                challenges: {
+                    perfectGame: false,
+                    speedRunner: false,
+                    comboMaster: false,
+                    survivor: false
                 }
             };
+            
             initGame();
         }
 
-        function useHint() {
-            if (gameState.hints <= 0 || !gameState.gameActive) return;
-            
-            const unmatched = gameState.cards.filter(card => !card.matched && !card.flipped);
-            if (unmatched.length >= 2) {
-                const randomCard = unmatched[Math.floor(Math.random() * unmatched.length)];
-                const matchingCard = unmatched.find(card => card.emoji === randomCard.emoji && card.id !== randomCard.id);
+        function startTimer() {
+            gameState.timerInterval = setInterval(() => {
+                gameState.timer--;
+                updateDisplay();
+                updateTimerBar();
                 
-                if (matchingCard) {
-                    const cardElement1 = document.querySelectorAll('.card')[randomCard.id];
-                    const cardElement2 = document.querySelectorAll('.card')[matchingCard.id];
-                    
-                    cardElement1.style.border = '3px solid #ffeb3b';
-                    cardElement2.style.border = '3px solid #ffeb3b';
-                    
-                    setTimeout(() => {
-                        cardElement1.style.border = '3px solid rgba(255,255,255,0.3)';
-                        cardElement2.style.border = '3px solid rgba(255,255,255,0.3)';
-                    }, 2000);
-                    
-                    gameState.hints--;
+                if (gameState.timer <= 0) {
+                    gameOver();
                 }
+            }, 1000);
+        }
+
+        function updateTimerBar() {
+            const currentLevel = levels[gameState.level - 1] || levels[levels.length - 1];
+            const maxTime = currentLevel.time;
+            const percentage = (gameState.timer / maxTime) * 100;
+            
+            const timerFill = document.getElementById('timerFill');
+            timerFill.style.width = `${percentage}%`;
+            
+            // 시간에 따른 색상 변경
+            timerFill.classList.remove('warning', 'danger');
+            if (percentage <= 20) {
+                timerFill.classList.add('danger');
+            } else if (percentage <= 40) {
+                timerFill.classList.add('warning');
             }
         }
 
-        function pauseGame() {
-            if (gameState.gameActive) {
-                gameState.gameActive = false;
-                clearInterval(gameState.timerInterval);
-                showAchievement('⏸️ 게임 일시정지');
+        function gameOver() {
+            gameState.gameActive = false;
+            clearInterval(gameState.timerInterval);
+            showAchievement(`😵 게임 오버! 최종 점수: ${gameState.score.toLocaleString()}점`);
+            
+            // 통계 업데이트
+            if (gameState.score > gameState.bestScore) {
+                gameState.bestScore = gameState.score;
+                memoryStorage.setItem('bestScore', gameState.bestScore);
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('score').textContent = gameState.score.toLocaleString();
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('combo').textContent = gameState.combo;
+            document.getElementById('timer').textContent = gameState.timer;
+            document.getElementById('currentLevel').textContent = gameState.level;
+            
+            const currentLevelData = levels[gameState.level - 1] || levels[levels.length - 1];
+            document.getElementById('levelName').textContent = currentLevelData.name;
+            
+            const progress = gameState.totalPairs > 0 ? (gameState.matchedPairs / gameState.totalPairs) * 100 : 0;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            
+            // 통계 업데이트
+            document.getElementById('streakCount').textContent = gameState.streak;
+            document.getElementById('todayCount').textContent = gameState.todayGames;
+            
+            updateItemDisplay();
+        }
+
+        function shareScore() {
+            const shareText = `🧠 Memory Master에서 ${gameState.score.toLocaleString()}점을 달성했어요! 레벨 ${gameState.level}까지 도전! 🎮`;
+            
+            // 공유 팝업 생성
+            const popup = document.createElement('div');
+            popup.className = 'share-popup';
+            popup.innerHTML = `
+                <div class="share-title">점수 공유하기</div>
+                <div class="share-score">${gameState.score.toLocaleString()}점</div>
+                <div>레벨 ${gameState.level} 달성!</div>
+                <div class="share-buttons">
+                    <button class="share-btn copy" onclick="copyToClipboard('${shareText}')">📋 복사</button>
+                    <button class="share-btn" onclick="closeSharePopup()" style="background: #666;">닫기</button>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            
+            // 3초 후 자동 닫기
+            setTimeout(() => {
+                if (document.body.contains(popup)) {
+                    document.body.removeChild(popup);
+                }
+            }, 5000);
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showAchievement('📋 클립보드에 복사되었습니다!');
+                });
             } else {
-                gameState.gameActive = true;
-                startTimer();
-                showAchievement('▶️ 게임 재개');
+                // 폴백: 텍스트 선택 방식
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    showAchievement('📋 클립보드에 복사되었습니다!');
+                } catch (err) {
+                    showAchievement('❌ 복사에 실패했습니다.');
+                }
+                document.body.removeChild(textArea);
+            }
+            closeSharePopup();
+        }
+
+        function closeSharePopup() {
+            const popup = document.querySelector('.share-popup');
+            if (popup && document.body.contains(popup)) {
+                document.body.removeChild(popup);
             }
         }
 
@@ -1569,6 +1765,7 @@
                 soundEnabled = false;
                 btn.textContent = '🔇 사운드';
                 btn.style.opacity = '0.6';
+                showAchievement('🔇 사운드가 꺼졌습니다');
             } else {
                 initAudio();
                 if (audioContext) {
@@ -1577,9 +1774,413 @@
                     btn.style.opacity = '1';
                     // 테스트 사운드 재생
                     sounds.item();
+                    showAchievement('🔊 사운드가 켜졌습니다');
                 }
             }
         }
+        // 🎵 배경음악 시스템 - 기존 사운드 시스템 뒤에 추가
+        let backgroundMusic = {
+            context: null,
+            gainNode: null,
+            isPlaying: false,
+            currentTrack: null,
+            volume: 0.3,
+            tracks: {}
+        };
+
+        // 🎼 음악 초기화
+        function initBackgroundMusic() {
+            if (!audioContext) return;
+            
+            backgroundMusic.context = audioContext;
+            backgroundMusic.gainNode = audioContext.createGain();
+            backgroundMusic.gainNode.connect(audioContext.destination);
+            backgroundMusic.gainNode.gain.value = backgroundMusic.volume;
+            
+            console.log('🎵 배경음악 시스템 초기화 완료');
+        }
+
+        // 🎹 긴장감 있는 게임 배경음악 생성
+        function createGameBackgroundMusic() {
+            if (!backgroundMusic.context) return null;
+            
+            const duration = 32; // 32초 루프
+            const ctx = backgroundMusic.context;
+            
+            // 메인 베이스 라인 (낮은음, 긴장감)
+            const bassOsc = ctx.createOscillator();
+            const bassGain = ctx.createGain();
+            bassOsc.connect(bassGain);
+            bassGain.connect(backgroundMusic.gainNode);
+            
+            bassOsc.type = 'sawtooth';
+            bassOsc.frequency.value = 55; // A1
+            bassGain.gain.value = 0.4;
+            
+            // 베이스 리듬 패턴
+            const bassPattern = [55, 55, 58, 55, 62, 55, 58, 55]; // A, A, A#, A, D, A, A#, A
+            let bassIndex = 0;
+            
+            // 아르페지오 멜로디 (긴장감 조성)
+            const arpOsc = ctx.createOscillator();
+            const arpGain = ctx.createGain();
+            const arpFilter = ctx.createBiquadFilter();
+            
+            arpOsc.connect(arpFilter);
+            arpFilter.connect(arpGain);
+            arpGain.connect(backgroundMusic.gainNode);
+            
+            arpOsc.type = 'square';
+            arpFilter.type = 'lowpass';
+            arpFilter.frequency.value = 800;
+            arpGain.gain.value = 0.2;
+            
+            // 아르페지오 패턴 (A minor)
+            const arpPattern = [220, 261, 330, 440, 330, 261, 220, 196]; // A4, C5, E5, A5, E5, C5, A4, G4
+            let arpIndex = 0;
+            
+            // 드럼 킥 (긴장감 리듬)
+            function createKick(time) {
+                const kickOsc = ctx.createOscillator();
+                const kickGain = ctx.createGain();
+                kickOsc.connect(kickGain);
+                kickGain.connect(backgroundMusic.gainNode);
+                
+                kickOsc.type = 'sine';
+                kickOsc.frequency.setValueAtTime(60, time);
+                kickOsc.frequency.exponentialRampToValueAtTime(0.01, time + 0.1);
+                
+                kickGain.gain.setValueAtTime(0.6, time);
+                kickGain.gain.exponentialRampToValueAtTime(0.01, time + 0.1);
+                
+                kickOsc.start(time);
+                kickOsc.stop(time + 0.1);
+            }
+            
+            // 하이햇 (리듬감)
+            function createHiHat(time) {
+                const hihatOsc = ctx.createOscillator();
+                const hihatGain = ctx.createGain();
+                const hihatFilter = ctx.createBiquadFilter();
+                
+                hihatOsc.connect(hihatFilter);
+                hihatFilter.connect(hihatGain);
+                hihatGain.connect(backgroundMusic.gainNode);
+                
+                hihatOsc.type = 'white';
+                hihatFilter.type = 'highpass';
+                hihatFilter.frequency.value = 8000;
+                
+                hihatGain.gain.setValueAtTime(0.1, time);
+                hihatGain.gain.exponentialRampToValueAtTime(0.01, time + 0.05);
+                
+                hihatOsc.start(time);
+                hihatOsc.stop(time + 0.05);
+            }
+            
+            // 음악 시작
+            const startTime = ctx.currentTime;
+            bassOsc.start(startTime);
+            arpOsc.start(startTime);
+            
+            // 베이스 패턴 스케줄링 (1초마다)
+            for (let i = 0; i < duration; i++) {
+                const time = startTime + i;
+                bassOsc.frequency.setValueAtTime(bassPattern[i % bassPattern.length], time);
+                
+                // 킥드럼 (1, 3박에)
+                if (i % 2 === 0) {
+                    createKick(time);
+                }
+                
+                // 하이햇 (오프비트)
+                if (i % 2 === 1) {
+                    createHiHat(time);
+                }
+            }
+            
+            // 아르페지오 패턴 스케줄링 (0.5초마다)
+            for (let i = 0; i < duration * 2; i++) {
+                const time = startTime + (i * 0.5);
+                arpOsc.frequency.setValueAtTime(arpPattern[i % arpPattern.length], time);
+            }
+            
+            // 음악 종료
+            bassOsc.stop(startTime + duration);
+            arpOsc.stop(startTime + duration);
+            
+            return {
+                duration: duration,
+                stop: () => {
+                    try {
+                        bassOsc.stop();
+                        arpOsc.stop();
+                    } catch (e) {
+                        // 이미 중지됨
+                    }
+                }
+            };
+        }
+
+        // 🎵 간단한 메뉴 배경음악
+        function createMenuBackgroundMusic() {
+            if (!backgroundMusic.context) return null;
+            
+            const duration = 16; // 16초 루프
+            const ctx = backgroundMusic.context;
+            
+            // 부드러운 패드 사운드
+            const padOsc = ctx.createOscillator();
+            const padGain = ctx.createGain();
+            const padFilter = ctx.createBiquadFilter();
+            
+            padOsc.connect(padFilter);
+            padFilter.connect(padGain);
+            padGain.connect(backgroundMusic.gainNode);
+            
+            padOsc.type = 'sine';
+            padFilter.type = 'lowpass';
+            padFilter.frequency.value = 600;
+            padGain.gain.value = 0.15;
+            
+            // 화음 진행 (C - Am - F - G)
+            const chordProgression = [
+                [261, 330, 392], // C major
+                [220, 261, 330], // A minor
+                [174, 220, 261], // F major
+                [196, 247, 294]  // G major
+            ];
+            
+            const startTime = ctx.currentTime;
+            padOsc.start(startTime);
+            
+            // 화음 변경 (4초마다)
+            for (let i = 0; i < 4; i++) {
+                const time = startTime + (i * 4);
+                const chord = chordProgression[i];
+                padOsc.frequency.setValueAtTime(chord[0], time); // 루트 음
+            }
+            
+            padOsc.stop(startTime + duration);
+            
+            return {
+                duration: duration,
+                stop: () => {
+                    try {
+                        padOsc.stop();
+                    } catch (e) {
+                        // 이미 중지됨
+                    }
+                }
+            };
+        }
+
+        // 🎮 배경음악 재생 함수
+        function playBackgroundMusic(trackName = 'game') {
+            if (!soundEnabled || !audioContext) return;
+            
+            stopBackgroundMusic();
+            
+            initBackgroundMusic();
+            
+            let track;
+            if (trackName === 'game') {
+                track = createGameBackgroundMusic();
+            } else if (trackName === 'menu') {
+                track = createMenuBackgroundMusic();
+            }
+            
+            if (track) {
+                backgroundMusic.currentTrack = track;
+                backgroundMusic.isPlaying = true;
+                
+                // 음악이 끝나면 자동으로 반복
+                setTimeout(() => {
+                    if (backgroundMusic.isPlaying) {
+                        playBackgroundMusic(trackName);
+                    }
+                }, track.duration * 1000);
+                
+                console.log(`🎵 ${trackName} 배경음악 재생 시작`);
+            }
+        }
+
+        // 🔇 배경음악 정지
+        function stopBackgroundMusic() {
+            if (backgroundMusic.currentTrack) {
+                backgroundMusic.currentTrack.stop();
+                backgroundMusic.currentTrack = null;
+            }
+            backgroundMusic.isPlaying = false;
+            console.log('🔇 배경음악 정지');
+        }
+
+        // 🔊 배경음악 볼륨 조절
+        function setBackgroundMusicVolume(volume) {
+            backgroundMusic.volume = Math.max(0, Math.min(1, volume));
+            if (backgroundMusic.gainNode) {
+                backgroundMusic.gainNode.gain.value = backgroundMusic.volume;
+            }
+        }
+
+        // 🎵 배경음악 토글
+        function toggleBackgroundMusic() {
+            if (backgroundMusic.isPlaying) {
+                stopBackgroundMusic();
+                showAchievement('🔇 배경음악이 꺼졌습니다');
+                return false;
+            } else {
+                // 게임 중이면 게임 음악, 아니면 메뉴 음악
+                const trackName = gameState.gameActive ? 'game' : 'menu';
+                playBackgroundMusic(trackName);
+                showAchievement('🎵 배경음악이 켜졌습니다');
+                return true;
+            }
+        }
+
+        // 기존 toggleSound 함수 수정
+        function toggleSound() {
+            const btn = document.getElementById('soundBtn');
+            if (soundEnabled) {
+                soundEnabled = false;
+                stopBackgroundMusic();
+                btn.textContent = '🔇 사운드';
+                btn.style.opacity = '0.6';
+                showAchievement('🔇 사운드가 꺼졌습니다');
+            } else {
+                initAudio();
+                if (audioContext) {
+                    soundEnabled = true;
+                    btn.textContent = '🔊 사운드';
+                    btn.style.opacity = '1';
+                    // 테스트 사운드 재생
+                    sounds.item();
+                    // 배경음악 시작
+                    setTimeout(() => {
+                        const trackName = gameState.gameActive ? 'game' : 'menu';
+                        playBackgroundMusic(trackName);
+                    }, 500);
+                    showAchievement('🔊 사운드가 켜졌습니다');
+                }
+            }
+        }
+
+        // 게임 시작 시 배경음악 변경
+        function startNewGame() {
+            // 기존 startNewGame 로직...
+            clearInterval(gameState.timerInterval);
+            
+            // 통계 업데이트
+            gameState.totalGames++;
+            gameState.todayGames++;
+            memoryStorage.setItem('totalGames', gameState.totalGames);
+            
+            // 게임 상태 초기화 (통계는 유지)
+            const oldStats = {
+                bestScore: gameState.bestScore,
+                bestLevel: gameState.bestLevel,
+                totalGames: gameState.totalGames
+            };
+            
+            gameState = {
+                level: 1,
+                score: 0,
+                combo: 0,
+                timer: 45,
+                cards: [],
+                flippedCards: [],
+                matchedPairs: 0,
+                totalPairs: 0,
+                hints: 3,
+                gameActive: false,
+                timerInterval: null,
+                items: {
+                    gun: 0,
+                    timeAdd: 0,
+                    hint: 0,
+                    freeze: 0
+                },
+                streak: 0,
+                perfectRounds: 0,
+                bestScore: oldStats.bestScore,
+                bestLevel: oldStats.bestLevel,
+                totalGames: oldStats.totalGames,
+                todayGames: gameState.todayGames + 1,
+                challenges: {
+                    perfectGame: false,
+                    speedRunner: false,
+                    comboMaster: false,
+                    survivor: false
+                }
+            };
+            
+            initGame();
+            
+            // 🎵 게임 배경음악 시작
+            if (soundEnabled) {
+                setTimeout(() => {
+                    playBackgroundMusic('game');
+                }, 1000);
+            }
+        }
+
+        // 게임 오버 시 음악 정지
+        function gameOver() {
+            gameState.gameActive = false;
+            clearInterval(gameState.timerInterval);
+            showAchievement(`😵 게임 오버! 최종 점수: ${gameState.score.toLocaleString()}점`);
+            
+            // 통계 업데이트
+            if (gameState.score > gameState.bestScore) {
+                gameState.bestScore = gameState.score;
+                memoryStorage.setItem('bestScore', gameState.bestScore);
+            }
+            
+            // 🎵 배경음악을 메뉴 음악으로 변경
+            if (soundEnabled && backgroundMusic.isPlaying) {
+                setTimeout(() => {
+                    playBackgroundMusic('menu');
+                }, 2000);
+            }
+        }
+
+        // 키보드 단축키에 배경음악 토글 추가 (M키)
+        document.addEventListener('keydown', function(event) {
+            switch(event.code) {
+                case 'Space':
+                    event.preventDefault();
+                    if (!gameState.gameActive) {
+                        startNewGame();
+                    }
+                    break;
+                case 'KeyH':
+                    event.preventDefault();
+                    useHintItem();
+                    break;
+                case 'KeyG':
+                    event.preventDefault();
+                    useGun();
+                    break;
+                case 'KeyT':
+                    event.preventDefault();
+                    useTimeAdd();
+                    break;
+                case 'KeyF':
+                    event.preventDefault();
+                    useFreeze();
+                    break;
+                case 'KeyS':
+                    event.preventDefault();
+                    toggleSound();
+                    break;
+                case 'KeyM': // 🎵 M키로 배경음악만 토글
+                    event.preventDefault();
+                    if (soundEnabled) {
+                        toggleBackgroundMusic();
+                    }
+                    break;
+            }
+        });
 
         // 게임 시작 시 사운드 초기화 안내
         function showSoundPrompt() {
@@ -1590,19 +2191,94 @@
             }
         }
 
-        // 게임 시작
-        initGame();
-        showSoundPrompt();
-    </script>
-     <!-- 서비스 워커 등록 (body 끝부분에) -->
-     <script>
-        if ('serviceWorker' in navigator) {
-          window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-              .then(registration => console.log('SW 등록 성공'))
-              .catch(error => console.log('SW 등록 실패'));
-          });
+        // 터치 디바이스 최적화
+        if ('ontouchstart' in window) {
+            document.body.style.userSelect = 'none';
+            document.body.style.webkitUserSelect = 'none';
+            document.body.style.webkitTouchCallout = 'none';
         }
-        </script>
+
+        // 게임 초기화 및 시작
+        function initializeGame() {
+            loadGameData();
+              // 🎵 배경음악 볼륨 설정
+            setBackgroundMusicVolume(0.2); // 20% 볼륨으로 설정
+            initGame();
+            showSoundPrompt();
+            
+            // 시작 메시지
+            setTimeout(() => {
+                showAchievement('🎮 Memory Master에 오신 것을 환영합니다!');
+            }, 500);
+            
+            setTimeout(() => {
+                showAchievement('💡 단축키: H(힌트), G(총), T(시간), F(얼음), S(사운드), M(음악)');
+            }, 3000);
+        }
+
+        // 페이지 로드 완료 후 게임 시작
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeGame);
+        } else {
+            initializeGame();
+        }
+
+        // 페이지 숨김/표시 시 타이머 관리
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                if (gameState.timerInterval) {
+                    clearInterval(gameState.timerInterval);
+                }
+            } else {
+                if (gameState.gameActive && gameState.timer > 0) {
+                    startTimer();
+                }
+            }
+        });
+
+        // window resize 이벤트 처리 (반응형)
+        window.addEventListener('resize', function() {
+            if (gameState.cards.length > 0) {
+                const currentLevel = levels[gameState.level - 1] || levels[levels.length - 1];
+                const grid = document.getElementById('cardsGrid');
+                
+                if (window.innerWidth <= 480) {
+                    grid.style.gridTemplateColumns = `repeat(${Math.min(currentLevel.gridCols, 4)}, 1fr)`;
+                } else {
+                    grid.style.gridTemplateColumns = `repeat(${currentLevel.gridCols}, 1fr)`;
+                }
+            }
+        });
+
+        // 성능 최적화: 디바운스 함수
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // 메모리 관리를 위한 정리 함수
+        function cleanup() {
+            clearInterval(gameState.timerInterval);
+            
+            // 동적으로 생성된 요소들 정리
+            const dynamicElements = document.querySelectorAll('.combo-display, .penalty-display, .achievement, .item-drop, .rocket, .bird, .space-background, .stars, .screen-flash, .share-popup, .achievement-popup');
+            dynamicElements.forEach(el => {
+                if (document.body.contains(el)) {
+                    document.body.removeChild(el);
+                }
+            });
+        }
+
+        // 페이지 언로드 시 정리
+        window.addEventListener('beforeunload', cleanup);
+    </script>
 </body>
 </html>
+            
